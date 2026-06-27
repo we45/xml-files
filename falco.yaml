@@ -31,6 +31,7 @@ rules_file:
   - /etc/falco/falco_rules.yaml
   - /etc/falco/falco_rules.local.yaml
   - /etc/falco/rules.d
+  - /etc/falco/gcp_auditlog_rules.yaml
 
 #
 # Plugins that are available for use. These plugins are not loaded by
@@ -55,13 +56,18 @@ plugins:
     # https://github.com/falcosecurity/plugins/blob/master/plugins/cloudtrail/README.md
   - name: json
     library_path: libjson.so
+  - name: gcpaudit
+    library_path: libgcpaudit.so
+    open_params: "falco-plugin-sub"
+    init_config:
+        project_id: "[PROJECT ID]"
 
 # Setting this list to empty ensures that the above plugins are *not*
 # loaded and enabled by default. If you want to use the above plugins,
 # set a meaningful init_config/open_params for the cloudtrail plugin
 # and then change this to:
 # load_plugins: [cloudtrail, json]
-load_plugins: []
+load_plugins: [json, gcpaudit]
 
 # Watch config file and rules files for modification.
 # When a file is modified, Falco will propagate new config,
